@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>كرسي كاروهات سوجود للصلاة</title>
+<title>كرسي كاروهات سوجود للصلاة — العرض الأصلي</title>
 <script>
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 var PIXEL_ID='2092160668186467';
@@ -12,26 +12,53 @@ function genEventId(){return 'ev_'+Date.now()+'_'+Math.random().toString(36).sub
 var vcEventId = genEventId();
 fbq('track','PageView');
 fbq('track','ViewContent',{content_name:'Karohat Prayer Chair',content_ids:['B0FBL7G5PC'],content_type:'product',value:329.88,currency:'EGP'},{eventID:vcEventId});
+
 function getCookie(n){var m=document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)');return m?m.pop():'';}
+
+// تشفير SHA-256 (متطلب إجباري من Meta قبل إرسال أي PII زي الإيميل/الموبايل عبر CAPI)
+async function sha256Hex(str){
+  var enc = new TextEncoder().encode(str);
+  var buf = await crypto.subtle.digest('SHA-256', enc);
+  var arr = Array.from(new Uint8Array(buf));
+  return arr.map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
+
 var WEBHOOK='https://allhomz.app.n8n.cloud/webhook/karohat-capi';
-function sendCapi(extra){var payload={event_name:'ViewContent',event_id:vcEventId,event_source_url:window.location.href,client_user_agent:navigator.userAgent,fbp:getCookie('_fbp'),fbc:getCookie('_fbc'),content_name:'Karohat Prayer Chair',content_ids:['B0FBL7G5PC'],content_type:'product',value:329.88,currency:'EGP'};if(extra){for(var k in extra){payload[k]=extra[k];}}try{return fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),keepalive:true});}catch(e){}}
+function sendCapi(extra){
+  var payload={event_name:'ViewContent',event_id:vcEventId,event_source_url:window.location.href,client_user_agent:navigator.userAgent,fbp:getCookie('_fbp'),fbc:getCookie('_fbc'),content_name:'Karohat Prayer Chair',content_ids:['B0FBL7G5PC'],content_type:'product',value:329.88,currency:'EGP'};
+  if(extra){for(var k in extra){payload[k]=extra[k];}}
+  try{return fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),keepalive:true});}catch(e){}
+}
 sendCapi();
-function goToAmazon(e){
+
+async function goToAmazon(e){
   if(e){e.preventDefault();}
-  var email=(document.getElementById('lead_email')||{}).value||'';
-  var phone=(document.getElementById('lead_phone')||{}).value||'';
+  var emailRaw=(document.getElementById('lead_email')||{}).value||'';
+  var phoneRaw=(document.getElementById('lead_phone')||{}).value||'';
   var extra={};
-  if(email){extra.email=email.trim().toLowerCase();}
-  if(phone){var p=phone.replace(/[^0-9]/g,'');if(p.indexOf('0')===0){p='2'+p;}extra.phone=p;}
-  var url='https://www.amazon.eg/dp/B0FBL7G5PC';
-  if(email||phone){
-    var done=false;var go=function(){if(done)return;done=true;window.location.href=url;};
-    var r=sendCapi(extra);
-    if(r&&r.then){r.then(go).catch(go);}
-    setTimeout(go,800);
-  }else{
-    window.location.href=url;
+  var checkoutId = genEventId();
+
+  if(emailRaw){
+    var emailNorm = emailRaw.trim().toLowerCase();
+    extra.em = await sha256Hex(emailNorm); // إيميل مشفّر SHA-256 فقط — بدون نص صريح
   }
+  if(phoneRaw){
+    var p = phoneRaw.replace(/[^0-9]/g,'');
+    if(p.indexOf('0')===0){ p = '2'+p; } // تحويل لصيغة مصر الدولية (2xxxxxxxxxx)
+    extra.ph = await sha256Hex(p); // موبايل مشفّر SHA-256 فقط
+  }
+
+  extra.event_name = 'InitiateCheckout';
+  extra.event_id = checkoutId;
+
+  fbq('track','InitiateCheckout',{content_ids:['B0FBL7G5PC'],content_type:'product',value:329.88,currency:'EGP'},{eventID:checkoutId});
+
+  var url='https://www.amazon.eg/dp/B0FBL7G5PC';
+  var done=false;
+  var go=function(){ if(done) return; done=true; window.location.href=url; };
+  var r=sendCapi(extra);
+  if(r && r.then){ r.then(go).catch(go); } else { go(); }
+  setTimeout(go,800);
   return false;
 }
 </script>
@@ -41,10 +68,11 @@ body { font-family: 'Segoe UI', Tahoma, sans-serif; margin:0; background:#f4f4f4
 .wrap { max-width:480px; margin:0 auto; padding:20px; text-align:center; }
 .card { background:#fff; border-radius:16px; padding:20px; box-shadow:0 6px 24px rgba(0,0,0,.08); }
 .imgblock { margin-bottom:22px; }
-img.hero { width:100%; border-radius:12px; }
+img.hero { width:100%; border-radius:12px; display:block; }
 .cap { font-size:15px; color:#333; line-height:1.6; margin:8px 4px 0; font-weight:600; }
 .cap small { display:block; font-weight:400; color:#666; font-size:13px; margin-top:3px; }
 h1 { font-size:21px; margin:8px 0 6px; line-height:1.4; }
+.price-row { margin:6px 0 10px; }
 .price { font-size:26px; font-weight:bold; color:#B12704; }
 .old { font-size:15px; color:#888; text-decoration:line-through; margin-inline-start:8px; }
 p.sub { color:#555; font-size:15px; line-height:1.7; }
@@ -57,10 +85,77 @@ ul.feats li::before { content:'\2705 '; }
 .leadbox .lead-title { font-size:15px; font-weight:bold; color:#0B5FB0; margin:0 0 4px; }
 .leadbox .lead-note { font-size:12px; color:#5a7290; margin:0 0 10px; line-height:1.5; }
 .leadbox input { width:100%; padding:11px 12px; border:1px solid #CFE3FB; border-radius:8px; font-size:15px; margin-bottom:8px; direction:ltr; text-align:right; }
-.cta { display:block; background:#FF9900; color:#111; font-weight:bold; font-size:19px; text-decoration:none; padding:16px; border-radius:12px; margin:12px 0 10px; box-shadow:0 4px 14px rgba(255,153,0,.45); cursor:pointer; }
+.cta { display:block; background:#FF9900; color:#111; font-weight:bold; font-size:19px; text-decoration:none; padding:16px; border-radius:12px; margin:12px 0 10px; box-shadow:0 4px 14px rgba(255,153,0,.45); cursor:pointer; border:none; width:100%; }
 .trust { font-size:13px; color:#777; }
+footer { font-size:12px; color:#999; margin-top:18px; }
 </style>
 </head>
 <body>
 <div class="wrap">
-<div class="card">
+  <div class="card">
+
+    <!-- 1) الصورة الرئيسية -->
+    <div class="imgblock">
+      <img class="hero" src="Gemini_Generated_Image_m0g68sm0g68sm0g6_edited.jpg" alt="كرسي كاروهات سوجود للصلاة - الصورة الرئيسية">
+      <p class="cap">صلِّ واسجد براحة من غير ألم في الركبتين أو الظهر
+        <small>تصميم مدروس يخليك تخشع في صلاتك من غير ما تفكّر في أي وجع</small>
+      </p>
+    </div>
+
+    <h1>كرسي كاروهات سوجود للصلاة — محمول وقابل للطي</h1>
+
+    <div class="price-row">
+      <span class="price">329.88 جنيه</span>
+      <span class="old">355.88 جنيه</span>
+    </div>
+
+    <p class="sub">تصميم مريح يساعدك على أداء الصلاة براحة أكبر — مثالي للمنزل والسفر.</p>
+
+    <ul class="feats">
+      <li>وسادة إسفنجية عالية الكثافة لراحة أطول</li>
+      <li>هيكل معدني متين يتحمل حتى 120 كجم</li>
+      <li>تصميم مائل يدعم الظهر والركبتين أثناء السجود</li>
+      <li>خفيف الوزن وقابل للطي — يتنقل معاك بسهولة</li>
+      <li>مقاسات عملية: 62×30 سم وارتفاع 75 سم</li>
+    </ul>
+
+    <!-- 2) الإنفوجرافيك -->
+    <div class="imgblock">
+      <img class="hero" src="product_secondary_image.jpg" alt="كرسي كاروهات سوجود - الإنفوجرافيك والمميزات">
+      <p class="cap">وسادة إسفنجية عالية الكثافة + هيكل معدني يدوم سنين
+        <small>كل تفصيلة متصمّمة تدعم ظهرك وركبتيك أثناء السجود</small>
+      </p>
+    </div>
+
+    <!-- 3) صورة المقاسات / lifestyle -->
+    <div class="imgblock">
+      <img class="hero" src="Gemini_Generated_Image_m77ae4m77ae4m77a_edited.jpg" alt="كرسي كاروهات سوجود - المقاسات والاستخدام اليومي">
+      <p class="cap">مقاس عملي يناسب الكبار ويتحمل حتى 120 كجم
+        <small>62×30 سم وارتفاع 75 سم — خفيف وقابل للطي تاخده معاك في أي مكان</small>
+      </p>
+    </div>
+
+    <div class="urgency">
+      ⚡ الكمية محدودة — العرض لفترة وجيزة
+      <small>الطلب على كرسي كاروهات عالي — اطلبه دلوقتي قبل ما يخلص من المخزون</small>
+    </div>
+
+    <!-- فورم اختياري لجمع إشارات إضافية (Advanced Matching) قبل التحويل لأمازون -->
+    <div class="leadbox">
+      <p class="lead-title">هل تحب تستلم تأكيد الطلب وعروض حصرية؟ (اختياري)</p>
+      <p class="lead-note">بياناتك بتتشفّر بالكامل قبل إرسالها ولا تُستخدم إلا لتحسين تجربتك. الحقول اختيارية ولا تمنعك من إتمام الطلب على أمازون.</p>
+      <input type="email" id="lead_email" placeholder="بريدك الإلكتروني (اختياري)" autocomplete="email">
+      <input type="tel" id="lead_phone" placeholder="رقم موبايلك (اختياري)" autocomplete="tel">
+    </div>
+
+    <button class="cta" id="buyBtn" onclick="return goToAmazon(event)">
+      🛒 اشترِ الآن على أمازون
+    </button>
+
+    <p class="trust">الدفع عند الاستلام متاح · منتج أصلي 100%</p>
+
+    <footer>Karohat Sojoud — جميع الحقوق محفوظة</footer>
+  </div>
+</div>
+</body>
+</html>
