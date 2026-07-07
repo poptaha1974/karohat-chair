@@ -13,7 +13,27 @@ var vcEventId = genEventId();
 fbq('track','PageView');
 fbq('track','ViewContent',{content_name:'Karohat Prayer Chair',content_ids:['B0FBL7G5PC'],content_type:'product',value:329.88,currency:'EGP'},{eventID:vcEventId});
 function getCookie(n){var m=document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)');return m?m.pop():'';}
-try{fetch('https://allhomz.app.n8n.cloud/webhook/karohat-capi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event_name:'ViewContent',event_id:vcEventId,event_source_url:window.location.href,client_user_agent:navigator.userAgent,fbp:getCookie('_fbp'),fbc:getCookie('_fbc'),content_name:'Karohat Prayer Chair',content_ids:['B0FBL7G5PC'],content_type:'product',value:329.88,currency:'EGP'})});}catch(e){}
+var WEBHOOK='https://allhomz.app.n8n.cloud/webhook/karohat-capi';
+function sendCapi(extra){var payload={event_name:'ViewContent',event_id:vcEventId,event_source_url:window.location.href,client_user_agent:navigator.userAgent,fbp:getCookie('_fbp'),fbc:getCookie('_fbc'),content_name:'Karohat Prayer Chair',content_ids:['B0FBL7G5PC'],content_type:'product',value:329.88,currency:'EGP'};if(extra){for(var k in extra){payload[k]=extra[k];}}try{return fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),keepalive:true});}catch(e){}}
+sendCapi();
+function goToAmazon(e){
+  if(e){e.preventDefault();}
+  var email=(document.getElementById('lead_email')||{}).value||'';
+  var phone=(document.getElementById('lead_phone')||{}).value||'';
+  var extra={};
+  if(email){extra.email=email.trim().toLowerCase();}
+  if(phone){var p=phone.replace(/[^0-9]/g,'');if(p.indexOf('0')===0){p='2'+p;}extra.phone=p;}
+  var url='https://www.amazon.eg/dp/B0FBL7G5PC';
+  if(email||phone){
+    var done=false;var go=function(){if(done)return;done=true;window.location.href=url;};
+    var r=sendCapi(extra);
+    if(r&&r.then){r.then(go).catch(go);}
+    setTimeout(go,800);
+  }else{
+    window.location.href=url;
+  }
+  return false;
+}
 </script>
 <style>
 * { box-sizing: border-box; }
@@ -33,43 +53,14 @@ ul.feats li { margin:8px 0; }
 ul.feats li::before { content:'\2705 '; }
 .urgency { background:#FFF3E0; border:1px solid #FFCC80; color:#C0392B; font-weight:bold; font-size:15px; border-radius:10px; padding:12px; margin:18px 0 4px; }
 .urgency small { display:block; color:#7a5c00; font-weight:400; font-size:13px; margin-top:4px; }
-.cta { display:block; background:#FF9900; color:#111; font-weight:bold; font-size:19px; text-decoration:none; padding:16px; border-radius:12px; margin:12px 0 10px; box-shadow:0 4px 14px rgba(255,153,0,.45); }
+.leadbox { background:#F0F7FF; border:1px solid #CFE3FB; border-radius:12px; padding:14px; margin:14px 0 6px; text-align:right; }
+.leadbox .lead-title { font-size:15px; font-weight:bold; color:#0B5FB0; margin:0 0 4px; }
+.leadbox .lead-note { font-size:12px; color:#5a7290; margin:0 0 10px; line-height:1.5; }
+.leadbox input { width:100%; padding:11px 12px; border:1px solid #CFE3FB; border-radius:8px; font-size:15px; margin-bottom:8px; direction:ltr; text-align:right; }
+.cta { display:block; background:#FF9900; color:#111; font-weight:bold; font-size:19px; text-decoration:none; padding:16px; border-radius:12px; margin:12px 0 10px; box-shadow:0 4px 14px rgba(255,153,0,.45); cursor:pointer; }
 .trust { font-size:13px; color:#777; }
 </style>
 </head>
 <body>
 <div class="wrap">
 <div class="card">
-
-<div class="imgblock">
-<img class="hero" src="Gemini_Generated_Image_m0g68sm0g68sm0g6_edited.jpg" alt="كرسي كاروهات للصلاة">
-<p class="cap">صلِّ واسجد براحة من غير ألم في الركبتين أو الظهر<small>تصميم مدروس يخليك تخشع في صلاتك من غير ما تفكّر في أي وجع</small></p>
-</div>
-
-<div class="imgblock">
-<img class="hero" src="product_secondary_image.jpg" alt="مميزات كرسي كاروهات للصلاة">
-<p class="cap">وسادة إسفنجية عالية الكثافة + هيكل معدني يدوم سنين<small>كل تفصيلة متصمّمة تدعم ظهرك وركبتيك أثناء السجود</small></p>
-</div>
-
-<div class="imgblock">
-<img class="hero" src="Gemini_Generated_Image_m77ae4m77ae4m77a_edited.jpg" alt="مقاسات كرسي كاروهات للصلاة">
-<p class="cap">مقاس عملي يناسب الكبار ويتحمل حتى 120 كجم<small>62×30 سم وارتفاع 75 سم — خفيف وقابل للطي تاخده معاك في أي مكان</small></p>
-</div>
-
-<h1>كرسي كاروهات سوجود للصلاة — محمول وقابل للطي</h1>
-<div><span class="price">329.88 جنيه</span><span class="old">355.88 جنيه</span></div>
-<p class="sub">تصميم مريح يساعدك على أداء الصلاة براحة أكبر — مثالي للمنزل والسفر.</p>
-<ul class="feats">
-<li>وسادة إسفنجية عالية الكثافة لراحة فائقة</li>
-<li>هيكل معدني قوي ومتين يتحمل حتى 120 كجم</li>
-<li>تصميم مائل يدعم الظهر والركبتين</li>
-<li>خفيف الوزن وقابل للطي — لا يشغل مساحة</li>
-<li>مقاس عملي: 62×30 سم وارتفاع حتى 75 سم</li>
-</ul>
-<div class="urgency">⚡ الكمية محدودة — العرض لفترة وجيزة<small>الطلب على كرسي كاروهات عالي — اطلبه دلوقتي قبل ما يخلص من المخزون</small></div>
-<a class="cta" href="https://www.amazon.eg/dp/B0FBL7G5PC" target="_blank" rel="noopener">اشترِ الآن على أمازون</a>
-<p class="trust">الدفع عند الاستلام متاح · منتج أصلي 100%</p>
-</div>
-</div>
-</body>
-</html>
