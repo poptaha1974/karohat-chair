@@ -12,6 +12,8 @@ function genEventId(){return 'ev_'+Date.now()+'_'+Math.random().toString(36).sub
 var vcEventId = genEventId();
 fbq('track','PageView');
 fbq('track','ViewContent',{content_name:'Karohat Prayer Chair',content_ids:['B0FBL7G5PC'],content_type:'product',value:329.88,currency:'EGP'},{eventID:vcEventId});
+function getCookie(n){var m=document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)');return m?m.pop():'';}
+try{fetch('https://allhomz.app.n8n.cloud/webhook/karohat-capi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event_name:'ViewContent',event_id:vcEventId,event_source_url:window.location.href,client_user_agent:navigator.userAgent,fbp:getCookie('_fbp'),fbc:getCookie('_fbc'),content_name:'Karohat Prayer Chair',content_ids:['B0FBL7G5PC'],content_type:'product',value:329.88,currency:'EGP'})});}catch(e){}
 </script>
 <style>
 * { box-sizing: border-box; }
