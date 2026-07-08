@@ -6,6 +6,14 @@
   <title>كرسي كاروهات سوجود للصلاة — العرض الأصلي</title>
   <meta name="description" content="كرسي كاروهات سوجود للصلاة: تصميم مريح وقابل للطي، وسادة عالية الكثافة، وهيكل متين يتحمل حتى 120 كجم.">
 
+  <meta property="og:type" content="product">
+  <meta property="og:title" content="كرسي كاروهات سوجود للصلاة — محمول وقابل للطي">
+  <meta property="og:description" content="تصميم مريح يدعم الظهر والركبتين أثناء السجود. وسادة عالية الكثافة وهيكل متين يتحمل حتى 120 كجم.">
+  <meta property="og:url" content="https://poptaha1974.github.io/karohat-chair/">
+  <meta property="og:image" content="https://poptaha1974.github.io/karohat-chair/Gemini_Generated_Image_m0g68sm0g68sm0g6_edited.jpg">
+  <meta property="og:locale" content="ar_EG">
+  <link rel="canonical" href="https://poptaha1974.github.io/karohat-chair/">
+
   <script>
     !function(f,b,e,v,n,t,s){
       if(f.fbq) return;
@@ -19,6 +27,8 @@
     var PIXEL_ID = '2092160668186467';
     var AMAZON_URL = 'https://www.amazon.eg/dp/B0FBL7G5PC';
     var WEBHOOK = 'https://allhomz.app.n8n.cloud/webhook/karohat-capi';
+    var PRODUCT_VALUE = 329.88;
+    var CURRENCY = 'EGP';
 
     fbq('init', PIXEL_ID);
 
@@ -66,7 +76,7 @@
       if (p.indexOf('20') === 0) {
         // already international without plus
       } else if (p.indexOf('01') === 0) {
-        p = '20' + p;
+        p = '20' + p.slice(1);
       } else if (p.length === 10 && p.indexOf('1') === 0) {
         p = '20' + p;
       } else {
@@ -88,8 +98,8 @@
         content_name: 'Karohat Prayer Chair',
         content_ids: ['B0FBL7G5PC'],
         content_type: 'product',
-        value: 329.88,
-        currency: 'EGP',
+        value: PRODUCT_VALUE,
+        currency: CURRENCY,
         utm_source: getQueryParam('utm_source'),
         utm_medium: getQueryParam('utm_medium'),
         utm_campaign: getQueryParam('utm_campaign'),
@@ -117,49 +127,13 @@
       content_name: 'Karohat Prayer Chair',
       content_ids: ['B0FBL7G5PC'],
       content_type: 'product',
-      value: 329.88,
-      currency: 'EGP'
+      value: PRODUCT_VALUE,
+      currency: CURRENCY
     }, {eventID: viewContentEventId});
     sendCapi(basePayload('ViewContent', viewContentEventId));
 
     async function goToAmazon(e){
       if (e) e.preventDefault();
-
-      var addToCartEventId = genEventId();
-      fbq('track', 'AddToCart', {
-        content_ids: ['B0FBL7G5PC'],
-        content_type: 'product',
-        value: 329.88,
-        currency: 'EGP'
-      }, {eventID: addToCartEventId});
-      sendCapi(basePayload('AddToCart', addToCartEventId));
-
-      var checkoutEventId = genEventId();
-      var payload = basePayload('InitiateCheckout', checkoutEventId);
-
-      var emailRaw = (document.getElementById('lead_email') || {}).value || '';
-      var phoneRaw = (document.getElementById('lead_phone') || {}).value || '';
-
-      if (emailRaw) {
-        var emailNorm = emailRaw.trim().toLowerCase();
-        if (emailNorm && emailNorm.indexOf('@') > 0) {
-          payload.em = await sha256Hex(emailNorm);
-        }
-      }
-
-      if (phoneRaw) {
-        var normalizedPhone = normalizeEgyptPhone(phoneRaw);
-        if (normalizedPhone) {
-          payload.ph = await sha256Hex(normalizedPhone);
-        }
-      }
-
-      fbq('track', 'InitiateCheckout', {
-        content_ids: ['B0FBL7G5PC'],
-        content_type: 'product',
-        value: 329.88,
-        currency: 'EGP'
-      }, {eventID: checkoutEventId});
 
       var done = false;
       function go(){
@@ -167,6 +141,47 @@
         done = true;
         window.location.href = AMAZON_URL;
       }
+      setTimeout(go, 900);
+
+      var addToCartEventId = genEventId();
+      fbq('track', 'AddToCart', {
+        content_ids: ['B0FBL7G5PC'],
+        content_type: 'product',
+        value: PRODUCT_VALUE,
+        currency: CURRENCY
+      }, {eventID: addToCartEventId});
+      sendCapi(basePayload('AddToCart', addToCartEventId));
+
+      var checkoutEventId = genEventId();
+      var payload = basePayload('InitiateCheckout', checkoutEventId);
+
+      try {
+        var emailRaw = (document.getElementById('lead_email') || {}).value || '';
+        var phoneRaw = (document.getElementById('lead_phone') || {}).value || '';
+
+        if (emailRaw) {
+          var emailNorm = emailRaw.trim().toLowerCase();
+          if (emailNorm && emailNorm.indexOf('@') > 0) {
+            payload.em = await sha256Hex(emailNorm);
+          }
+        }
+
+        if (phoneRaw) {
+          var normalizedPhone = normalizeEgyptPhone(phoneRaw);
+          if (normalizedPhone) {
+            payload.ph = await sha256Hex(normalizedPhone);
+          }
+        }
+      } catch (_) {
+        // crypto.subtle unavailable (insecure context / old browser) — proceed without hashes
+      }
+
+      fbq('track', 'InitiateCheckout', {
+        content_ids: ['B0FBL7G5PC'],
+        content_type: 'product',
+        value: PRODUCT_VALUE,
+        currency: CURRENCY
+      }, {eventID: checkoutEventId});
 
       var req = sendCapi(payload);
       if (req && req.then) {
@@ -174,7 +189,6 @@
       } else {
         go();
       }
-      setTimeout(go, 900);
       return false;
     }
   </script>
@@ -257,10 +271,10 @@
       </div>
 
       <div class="leadbox">
-        <p class="lead-title">هل تحب تستلم تأكيد الطلب وعروض حصرية؟ (اختياري)</p>
-        <p class="lead-note">بياناتك بتتشفّر بالكامل قبل إرسالها ولا تُستخدم إلا لتحسين تجربتك. الحقول اختيارية ولا تمنعك من إتمام الشراء.</p>
-        <input type="email" id="lead_email" placeholder="بريدك الإلكتروني (اختياري)" autocomplete="email">
-        <input type="tel" id="lead_phone" placeholder="رقم موبايلك (اختياري)" autocomplete="tel">
+        <p class="lead-title">ساعدنا نوصلك بعروض أدق تناسبك (اختياري)</p>
+        <p class="lead-note">بياناتك بتتحول لبصمة رقمية غير قابلة للعكس (SHA-256) قبل إرسالها، وتُستخدم فقط لتحسين دقة القياس الإعلاني. الحقول اختيارية ولا تمنعك من إتمام الشراء.</p>
+        <input type="email" id="lead_email" placeholder="بريدك الإلكتروني (اختياري)" autocomplete="email" aria-label="البريد الإلكتروني (اختياري)">
+        <input type="tel" id="lead_phone" placeholder="رقم موبايلك (اختياري)" autocomplete="tel" aria-label="رقم الموبايل (اختياري)">
         <p class="policy-note">
           بالضغط على زر الشراء، أنت توافق على
           <a href="privacy.html" target="_blank" rel="noopener">سياسة الخصوصية</a>
