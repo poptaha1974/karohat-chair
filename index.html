@@ -161,6 +161,22 @@
         currency: 'EGP'
       }, {eventID: checkoutEventId});
 
+      // Lead event — fire when user provided email or phone
+      if (emailRaw || phoneRaw) {
+        var leadEventId = genEventId();
+        var leadPayload = basePayload('Lead', leadEventId);
+        if (payload.em) leadPayload.em = payload.em;
+        if (payload.ph) leadPayload.ph = payload.ph;
+        fbq('track', 'Lead', {
+          content_name: 'Karohat Prayer Chair',
+          content_ids: ['B0FBL7G5PC'],
+          content_type: 'product',
+          value: 329.88,
+          currency: 'EGP'
+        }, {eventID: leadEventId});
+        sendCapi(leadPayload);
+      }
+
       var done = false;
       function go(){
         if (done) return;
